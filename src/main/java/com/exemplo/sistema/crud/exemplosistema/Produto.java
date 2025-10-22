@@ -1,6 +1,12 @@
 package com.exemplo.sistema.crud.exemplosistema;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table (name="tb_produto")
@@ -11,6 +17,9 @@ public class Produto {
     private String nome;
     private String descricao;
     private double preco;
+
+    @Enumerated(EnumType.STRING)
+    private Categoria categoria;
 
     // Getters e Setters
     public Long getId() { return id; }
@@ -24,4 +33,7 @@ public class Produto {
 
     public double getPreco() { return preco; }
     public void setPreco(double preco) { this.preco = preco; }
+
+    public Categoria getCategoria() { return categoria; }
+    public void setCategoria(Categoria categoria) { this.categoria = categoria; }
 }

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
 
@@ -22,74 +24,83 @@ public class ProdutoController {
 
     @GetMapping("/cadastro")
     public String formulario(Model model) {
-        model.addAttribute("produtoDTO", new ProdutoDTO());
+        // Garante que o DTO e as categorias estejam no modelo
+        if (!model.containsAttribute("produtoDTO")) {
+            model.addAttribute("produtoDTO", new ProdutoDTO());
+        }
+        model.addAttribute("categorias", Categoria.values());
         return "index";
     }
 
     @PostMapping("/cadastro")
     public String salvarProduto(@ModelAttribute("produtoDTO") @Valid ProdutoDTO produtoDTO,
-                                BindingResult result) {
+                                BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            return "index";
+            // Se houver erros, adiciona os atributos de volta para renderizar o formulário
+            // corretamente, incluindo as categorias.
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.produtoDTO", result);
+            redirectAttributes.addFlashAttribute("produtoDTO", produtoDTO);
+            return "redirect:/cadastro";
         }
 
         produtoRepository.save(ProdutoMapper.toEntity(produtoDTO));
-        return "redirect:/listar"; // Redireciona para a lista após o cadastro
+        // Adiciona uma mensagem de sucesso para o alert dinâmico
+        redirectAttributes.addFlashAttribute("successMessage", "Produto cadastrado com sucesso!");
+        return "redirect:/cadastro";
     }
-
-    /** ENDPOINT ATUALIZADO: Exibe a lista de produtos cadastrados **/
+    
     @GetMapping("/listar")
-    public String listarProdutos(Model model) {
-        // Busca todas as entidades Produto
-        List<Produto> produtos = produtoRepository.findAll();
+    public String listarProdutos(@RequestParam(name = "categoria", required = false) Categoria categoria, Model model) {
+        List<Produto> produtos;
 
-        // Converte a lista de entidades (Produto) para DTOs (ProdutoDTO)
+        // Se uma categoria foi fornecida no filtro, busca por ela
+        if (categoria != null) {
+            produtos = produtoRepository.findByCategoria(categoria);
+        } else {
+            // Caso contrário, busca todos os produtos
+            produtos = produtoRepository.findAll();
+        }
+
         List<ProdutoDTO> produtosDTO = produtos.stream()
             .map(ProdutoMapper::toDTO)
             .collect(Collectors.toList());
 
-        // Adiciona a lista de DTOs ao modelo (atributo "produtos")
         model.addAttribute("produtos", produtosDTO);
-        
-        // Retorna o nome do template Thymeleaf
+        model.addAttribute("categorias", Categoria.values()); // Para o dropdown do filtro
+        model.addAttribute("categoriaSelecionada", categoria); // Para manter o valor do filtro
         return "listar";
     }
 
-    /** NOVO ENDPOINT: Exclui um produto pelo ID **/
     @GetMapping("/excluir/{id}")
     public String excluirProduto(@PathVariable("id") Long id) {
         produtoRepository.deleteById(id);
         return "redirect:/listar";
     }
 
-    /** NOVO ENDPOINT: Mostra o formulário de edição com os dados do produto **/
     @GetMapping("/editar/{id}")
     public String mostrarFormularioEdicao(@PathVariable("id") Long id, Model model) {
-        // Procura o produto pelo ID ou lança uma exceção se não encontrar
         Produto produto = produtoRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("ID do produto inválido:" + id));
         
-        // Converte a entidade para DTO e a envia para o modelo
         model.addAttribute("produtoDTO", ProdutoMapper.toDTO(produto));
-        return "editar"; // Nome do novo template de edição
+        model.addAttribute("categorias", Categoria.values()); // Adiciona categorias para o dropdown
+        return "editar";
     }
 
-    /** NOVO ENDPOINT: Processa a atualização do produto **/
     @PostMapping("/editar/{id}")
     public String editarProduto(@PathVariable("id") Long id, 
                                 @ModelAttribute("produtoDTO") @Valid ProdutoDTO produtoDTO, 
-                                BindingResult result) {
+                                BindingResult result, Model model) {
         if (result.hasErrors()) {
-            // Mantém o ID no DTO para que o formulário possa ser reenviado corretamente
             produtoDTO.setId(id);
+            model.addAttribute("categorias", Categoria.values()); // Reenvia categorias em caso de erro
             return "editar";
         }
 
-        // Converte o DTO para entidade, define o ID e salva as alterações
         Produto produto = ProdutoMapper.toEntity(produtoDTO);
-        produto.setId(id); 
         produtoRepository.save(produto);
         
         return "redirect:/listar";
     }
 }
+

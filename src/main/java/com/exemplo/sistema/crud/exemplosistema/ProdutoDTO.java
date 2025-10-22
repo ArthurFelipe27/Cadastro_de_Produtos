@@ -1,10 +1,11 @@
 package com.exemplo.sistema.crud.exemplosistema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public class ProdutoDTO {
-    // Adicionado ID para uso na listagem/edição
-    private Long id; 
+
+    private Long id;
 
     @NotBlank(message = "Nome é obrigatório")
     private String nome;
@@ -14,6 +15,9 @@ public class ProdutoDTO {
 
     @Positive(message = "Preço deve ser maior que zero")
     private double preco;
+
+    @NotNull(message = "Categoria é obrigatória")
+    private Categoria categoria;
 
     // Getters e Setters
     public Long getId() { return id; }
@@ -27,4 +31,7 @@ public class ProdutoDTO {
 
     public double getPreco() { return preco; }
     public void setPreco(double preco) { this.preco = preco; }
+
+    public Categoria getCategoria() { return categoria; }
+    public void setCategoria(Categoria categoria) { this.categoria = categoria; }
 }
