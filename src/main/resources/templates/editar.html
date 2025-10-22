@@ -21,7 +21,9 @@
                 <div class="card">
                     <div class="card-body p-4 p-md-5">
                         <h2 class="card-title mb-4">Editar Produto</h2>
+                        <!-- Formulário de edição, que envia os dados para /editar/{id} -->
                         <form th:action="@{/editar/{id}(id=${produtoDTO.id})}" th:object="${produtoDTO}" method="post">
+                            <!-- Campos do formulário pré-preenchidos com os dados do produto -->
                             <div class="mb-3">
                                 <label for="nome" class="form-label">Nome:</label>
                                 <input type="text" th:field="*{nome}" class="form-control" />
@@ -47,6 +49,7 @@
                                     <div class="text-danger" th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}"></div>
                                 </div>
                             </div>
+                            <!-- Botões de ação alinhados à direita -->
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <a th:href="@{/listar}" class="btn btn-secondary">Cancelar</a>
                                 <button type="submit" class="btn btn-success">Salvar Alterações</button>

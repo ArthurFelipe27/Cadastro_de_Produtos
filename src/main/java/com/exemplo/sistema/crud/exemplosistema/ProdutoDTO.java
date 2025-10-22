@@ -3,6 +3,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+/**
+ * DTO (Data Transfer Object) para a entidade Produto.
+ * Utilizado para transferir dados entre o controller e a view,
+ * e para aplicar validações nos dados de entrada do formulário.
+ */
 public class ProdutoDTO {
 
     private Long id;
@@ -19,7 +24,9 @@ public class ProdutoDTO {
     @NotNull(message = "Categoria é obrigatória")
     private Categoria categoria;
 
-    // Getters e Setters
+    // --- Getters e Setters ---
+    // Métodos de acesso para os atributos do DTO.
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -35,3 +42,4 @@ public class ProdutoDTO {
     public Categoria getCategoria() { return categoria; }
     public void setCategoria(Categoria categoria) { this.categoria = categoria; }
 }
+
