@@ -20,6 +20,8 @@
                 <th>Nome</th>
                 <th>Descrição</th>
                 <th>Preço</th>
+                <!-- Nova coluna para ações -->
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -30,6 +32,11 @@
                 <td th:text="${produto.descricao}">Descrição detalhada do produto.</td>
                 <!-- Formata o preço como moeda brasileira (R$) com duas casas decimais -->
                 <td th:text="'R$ ' + ${#numbers.formatDecimal(produto.preco, 1, 'POINT', 2, 'COMMA')}">R$ 100,00</td>
+                <!-- Célula com os botões de ação -->
+                <td>
+                    <a th:href="@{/editar/{id}(id=${produto.id})}" class="btn btn-warning btn-sm">Editar</a>
+                    <a th:href="@{/excluir/{id}(id=${produto.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este produto?');">Excluir</a>
+                </td>
             </tr>
         </tbody>
     </table>

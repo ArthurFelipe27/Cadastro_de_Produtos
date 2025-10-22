@@ -9,10 +9,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.validation.Valid;
-
 
 @Controller
 public class ProdutoController {
@@ -34,11 +34,11 @@ public class ProdutoController {
         }
 
         produtoRepository.save(ProdutoMapper.toEntity(produtoDTO));
-        return "redirect:/listagem"; // Redireciona para a lista após o cadastro
+        return "redirect:/listar"; // Redireciona para a lista após o cadastro
     }
 
-    /** NOVO ENDPOINT: Exibe a lista de produtos cadastrados **/
-    @GetMapping("/listagem")
+    /** ENDPOINT ATUALIZADO: Exibe a lista de produtos cadastrados **/
+    @GetMapping("/listar")
     public String listarProdutos(Model model) {
         // Busca todas as entidades Produto
         List<Produto> produtos = produtoRepository.findAll();
@@ -52,6 +52,44 @@ public class ProdutoController {
         model.addAttribute("produtos", produtosDTO);
         
         // Retorna o nome do template Thymeleaf
-        return "listagem";
+        return "listar";
+    }
+
+    /** NOVO ENDPOINT: Exclui um produto pelo ID **/
+    @GetMapping("/excluir/{id}")
+    public String excluirProduto(@PathVariable("id") Long id) {
+        produtoRepository.deleteById(id);
+        return "redirect:/listar";
+    }
+
+    /** NOVO ENDPOINT: Mostra o formulário de edição com os dados do produto **/
+    @GetMapping("/editar/{id}")
+    public String mostrarFormularioEdicao(@PathVariable("id") Long id, Model model) {
+        // Procura o produto pelo ID ou lança uma exceção se não encontrar
+        Produto produto = produtoRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("ID do produto inválido:" + id));
+        
+        // Converte a entidade para DTO e a envia para o modelo
+        model.addAttribute("produtoDTO", ProdutoMapper.toDTO(produto));
+        return "editar"; // Nome do novo template de edição
+    }
+
+    /** NOVO ENDPOINT: Processa a atualização do produto **/
+    @PostMapping("/editar/{id}")
+    public String editarProduto(@PathVariable("id") Long id, 
+                                @ModelAttribute("produtoDTO") @Valid ProdutoDTO produtoDTO, 
+                                BindingResult result) {
+        if (result.hasErrors()) {
+            // Mantém o ID no DTO para que o formulário possa ser reenviado corretamente
+            produtoDTO.setId(id);
+            return "editar";
+        }
+
+        // Converte o DTO para entidade, define o ID e salva as alterações
+        Produto produto = ProdutoMapper.toEntity(produtoDTO);
+        produto.setId(id); 
+        produtoRepository.save(produto);
+        
+        return "redirect:/listar";
     }
 }
