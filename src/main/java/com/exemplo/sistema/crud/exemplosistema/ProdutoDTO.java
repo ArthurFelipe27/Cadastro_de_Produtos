@@ -3,6 +3,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 
 public class ProdutoDTO {
+    // Adicionado ID para uso na listagem/edição
+    private Long id; 
+
     @NotBlank(message = "Nome é obrigatório")
     private String nome;
 
@@ -13,6 +16,9 @@ public class ProdutoDTO {
     private double preco;
 
     // Getters e Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 
@@ -22,6 +28,3 @@ public class ProdutoDTO {
     public double getPreco() { return preco; }
     public void setPreco(double preco) { this.preco = preco; }
 }
-
-
-  

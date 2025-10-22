@@ -12,6 +12,7 @@ public class ProdutoMapper {
 
     public static ProdutoDTO toDTO(Produto produto) {
         ProdutoDTO dto = new ProdutoDTO();
+        dto.setId(produto.getId()); // Mapeamento do ID
         dto.setNome(produto.getNome());
         dto.setDescricao(produto.getDescricao());
         dto.setPreco(produto.getPreco());
