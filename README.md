@@ -38,12 +38,12 @@ A aplicação permite realizar operações CRUD completas (Criar, Ler, Atualizar
 - Servidor MySQL em execução localmente
 
 ## ⚙️ Como Executar o Projeto  
-1️. Clone o repositório  
+1️.  Clone o repositório  
 ````
 git clone https://github.com/seu-usuario/nome-do-repositorio.git
 cd nome-do-repositorio
 ````
-2️. Configure o banco de dados  
+2️.  Configure o banco de dados  
 
 Certifique-se de que o servidor MySQL está ativo e crie o banco:  
 ``
@@ -64,10 +64,11 @@ spring.datasource.password=       # Atualize com sua senha
 ````
 
 Configuração do Hibernate:  
-``spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect  
+````
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect  
 spring.jpa.hibernate.ddl-auto=create  # Use "update" em produção  
-``  
-3️. Execute a aplicação:  
+````
+3️.  Execute a aplicação:  
 
 ### 🖥️ Usando o Maven Wrapper:  
 ````
@@ -77,9 +78,9 @@ spring.jpa.hibernate.ddl-auto=create  # Use "update" em produção
 # Windows
 mvnw.cmd spring-boot:run
 ````
-###💡 Ou pela IDE (IntelliJ, Eclipse, VSCode):  
+### 💡 Ou pela IDE (IntelliJ, Eclipse, VSCode):  
 Execute a classe principal:  
-**ExemplosistemaApplication.java**
+``ExemplosistemaApplication.java``
 
 4️. Acesse a aplicação
 
